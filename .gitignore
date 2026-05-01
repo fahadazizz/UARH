@@ -1,0 +1,13 @@
+.venv/
+data/chromadb/
+.vscode/
+.git/
+dataset/
+
+data/axioms.json
+data/lineage.db
+data/semantic_graph.json
+
+.env.example
+.env
+__pycache__

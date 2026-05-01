@@ -1,0 +1,28 @@
+╭──────────────────────────────────────────────── UARH v0.1.0 ─────────────────────────────────────────────────╮
+│ Universal Autonomous Research Harness                                                                        │
+│ Target: Design a 10M parameter diffusion-based language model. It must leave autoregressive generation       │
+│ behind to predict a large number of tokens simultaneously, reducing compute and training time. The model     │
+│ must implement a run_training function that trains on the text dataset located at                            │
+│ /Volumes/DataDrive/UARH/dataset/input.txt.  |  Domain: language_modeling                                     │
+│ Cycles: 1  |  Elite: ollama/qwen3.5:397b-cloud  |  Fast: ollama/qwen3.5:397b-cloud                           │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+[02:49:28] INFO     Loaded 1 axioms from lineage DB.                                          distillation.py:39
+Loaded 1 distilled axiom(s) from previous runs.
+
+═══ Cycle 1/1 ═══
+           ERROR    Unhandled error in cycle 1                                                       main.py:172
+                    ╭───────────────────── Traceback (most recent call last) ──────────────────────╮            
+                    │ /Volumes/DataDrive/UARH/uarh/main.py:121 in run                              │            
+                    │                                                                              │            
+                    │   118 │   │                                                                  │            
+                    │   119 │   │   try:                                                           │            
+                    │   120 │   │   │   # Execute the graph                                        │            
+                    │ ❱ 121 │   │   │   final_state = graph.invoke(initial_state.model_dump())     │            
+                    │   122 │   │   │                                                              │            
+                    │   123 │   │   │   # Analyse result                                           │            
+                    │   124 │   │   │   status = final_state.get("hypothesis_status", "unknown")   │            
+                    ╰──────────────────────────────────────────────────────────────────────────────╯            
+                    AttributeError: 'dict' object has no attribute 'model_dump'                                 
+ERROR: 'dict' object has no attribute 'model_dump'
+
+═══ UARH Complete (1 cycle(s)) ═══
