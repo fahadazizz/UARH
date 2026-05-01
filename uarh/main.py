@@ -157,9 +157,17 @@ def run(
             )
             break
 
+        run_id = f"run-{uuid.uuid4().hex[:12]}"
+        
+        # Setup output directory for this run
+        from pathlib import Path
+        output_dir = Path("workspace/runs") / run_id
+        output_dir.mkdir(parents=True, exist_ok=True)
+        experiment_config["output_dir"] = str(output_dir.absolute())
+
         # Build initial state as a plain dict (NOT Pydantic model_dump)
         initial_state = {
-            "run_id": f"run-{uuid.uuid4().hex[:12]}",
+            "run_id": run_id,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "target_metric": target,
             "domain": domain,
@@ -195,6 +203,17 @@ def run(
                     metrics = summary.get("key_metrics", {})
                     if metrics:
                         console.print(f"  Metrics: {metrics}")
+
+                # Save artifacts
+                code = final_state.get("code", "")
+                if code:
+                    (output_dir / "experiment.py").write_text(code, encoding="utf-8")
+                
+                paper_dict = final_state.get("paper", {})
+                if paper_dict and "markdown_content" in paper_dict:
+                    (output_dir / "paper.md").write_text(paper_dict["markdown_content"], encoding="utf-8")
+                
+                console.print(f"  [bold blue]Artifacts saved to:[/bold blue] {output_dir}")
 
             elif status == HypothesisStatus.FAILED.value:
                 consecutive_failures += 1

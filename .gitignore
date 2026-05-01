@@ -3,6 +3,7 @@ data/chromadb/
 .vscode/
 .git/
 dataset/
+workspace/
 
 data/axioms.json
 data/lineage.db
@@ -10,4 +11,5 @@ data/semantic_graph.json
 
 .env.example
 .env
+execution_run.log
 __pycache__

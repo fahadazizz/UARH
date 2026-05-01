@@ -255,6 +255,10 @@ class ExperimentConfig(BaseModel):
         default="cpu",
         description="Available hardware: 'cpu', 'cuda', 'mps'.",
     )
+    output_dir: Optional[str] = Field(
+        default=None,
+        description="Directory to save trained models, visualizations, and artifacts.",
+    )
     extra_context: str = Field(
         default="",
         description="Any additional context the user wants the PI to know.",
@@ -294,6 +298,7 @@ class HarnessState(TypedDict, total=False):
     implementation_blocker: Optional[Dict[str, Any]]
     debug_patch: Optional[Dict[str, Any]]
     experiment_summary: Optional[Dict[str, Any]]
+    paper: Optional[Dict[str, Any]]
 
     # ── Live Code (mutable — updated by Architect & Debugger)
     code: Optional[str]
