@@ -1,0 +1,30 @@
+# ==============================================================================
+# UARH EXPERIMENT CONFIGURATION
+# ==============================================================================
+
+# --- NECESSARY CONFIGURATIONS ---
+# The core definitions required for the experiment to run.
+experiment:
+  domain: general_ai          # Options: language_modeling, reinforcement_learning, computer_vision, generative_models, etc.
+  hardware: cpu               # Options: cpu, cuda, mps
+
+# --- IMPORTANT CONFIGURATIONS ---
+# Hyperparameters and constraints that dictate the scale of the run.
+hyperparameters:
+  cycles: 1                   # Number of hypothesis generation cycles
+  max_steps: 50               # Number of training steps (or epochs/episodes)
+  learning_rate: 0.001        # Base learning rate for optimization
+  max_params: 10000000        # Maximum parameter limit for the model (e.g., 10M)
+
+# --- OPTIONAL CONFIGURATIONS ---
+# Context-specific paths and environments depending on the chosen domain.
+context:
+  dataset_path: dataset/input.txt  # Used if domain needs file-based data
+  environment_name: ''             # Used for RL domains (e.g., CartPole-v1)
+
+# --- SYSTEM CONFIGURATIONS ---
+# Global overrides for LLM providers and sandbox settings.
+system:
+  elite_model: ollama/qwen3.5:397b-cloud  # Complex reasoning (PI, Architect)
+  fast_model: ollama/qwen3.5:397b-cloud   # Speed-critical (Scientist, Debugger)
+  sandbox_timeout: 300                    # Max execution time (seconds)

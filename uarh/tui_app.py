@@ -47,7 +47,7 @@ class UarhApp(App):
     }
     """
 
-    def __init__(self, target: str, domain: str, dataset: str, env: str, max_params: int, hardware: str, context: str, cycles: int):
+    def __init__(self, target: str, domain: str, dataset: str, env: str, max_params: int, hardware: str, context: str, cycles: int, experiment_dir: str = "workspace"):
         super().__init__()
         self.target = target
         self.domain = domain
@@ -57,6 +57,7 @@ class UarhApp(App):
         self.hardware = hardware
         self.context = context
         self.cycles = cycles
+        self.experiment_dir = experiment_dir
 
         self.graph = build_graph()
         self.settings = get_settings()
@@ -142,7 +143,7 @@ class UarhApp(App):
             logging.info(f"=== Cycle {cycle_num}/{self.cycles} ===")
             
             run_id = f"run-{uuid.uuid4().hex[:12]}"
-            output_dir = Path("workspace/runs") / run_id
+            output_dir = Path(self.experiment_dir) / "runs" / run_id
             output_dir.mkdir(parents=True, exist_ok=True)
             
             # Add run-specific log handler
