@@ -2,6 +2,7 @@
 data/chromadb/
 .vscode/
 .git/
+.ruff_cache/
 dataset/
 workspace/
 

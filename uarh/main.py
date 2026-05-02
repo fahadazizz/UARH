@@ -164,6 +164,11 @@ def run(
         output_dir = Path("workspace/runs") / run_id
         output_dir.mkdir(parents=True, exist_ok=True)
         experiment_config["output_dir"] = str(output_dir.absolute())
+        
+        # Add run-specific log handler
+        file_handler = logging.FileHandler(output_dir / "run_log.txt")
+        file_handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s - %(name)s - %(message)s"))
+        logging.getLogger().addHandler(file_handler)
 
         # Build initial state as a plain dict (NOT Pydantic model_dump)
         initial_state = {
@@ -249,6 +254,63 @@ def run(
             console.print(f"[bold red]ERROR:[/bold red] {exc}")
 
     console.print(f"\n[bold]═══ UARH Complete ({cycles} cycle(s)) ═══[/bold]")
+
+
+@app.command()
+def tui(
+    target: str = typer.Argument(
+        ...,
+        help="The specific research target or goal.",
+    ),
+    domain: str = typer.Option(
+        "language_modeling",
+        "--domain", "-d",
+        help="The AI domain (e.g., language_modeling, reinforcement_learning).",
+    ),
+    dataset: str = typer.Option(
+        None,
+        "--dataset",
+        help="Path to the dataset directory or file.",
+    ),
+    env: str = typer.Option(
+        None,
+        "--env",
+        help="Environment name if applicable (e.g., CartPole-v1 for RL).",
+    ),
+    max_params: int = typer.Option(
+        10_000_000,
+        "--max-params", "-p",
+        help="Maximum parameter count constraint.",
+    ),
+    hardware: str = typer.Option(
+        "cpu",
+        "--hardware", "-hw",
+        help="Hardware required (cpu, cuda, mps).",
+    ),
+    context: str = typer.Option(
+        "",
+        "--context", "-c",
+        help="Extra context to give the Principal Investigator.",
+    ),
+    cycles: int = typer.Option(
+        1,
+        "--cycles",
+        help="Number of full research cycles to execute.",
+    ),
+) -> None:
+    """Launch the Universal Autonomous Research Harness in Interactive TUI mode."""
+    from uarh.tui_app import UarhApp
+    app = UarhApp(
+        target=target,
+        domain=domain,
+        dataset=dataset,
+        env=env,
+        max_params=max_params,
+        hardware=hardware,
+        context=context,
+        cycles=cycles,
+    )
+    app.run()
 
 
 @app.command()
