@@ -28,6 +28,7 @@ from uarh.agents.debug import DebugAgent
 from uarh.agents.pi import PIAgent
 from uarh.agents.scientist import DataScientistAgent
 from uarh.agents.theorist import TheoristAgent
+from uarh.agents.writer import PaperWriterAgent
 from uarh.core.config import get_settings
 from uarh.core.state import (
     HarnessState,
@@ -356,6 +357,16 @@ def node_scientist(state: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def node_writer(state: Dict[str, Any]) -> Dict[str, Any]:
+    """Paper Writer Agent: document the successful experiment."""
+    logger.info("━━━ NODE: Paper Writer ━━━")
+    agent = PaperWriterAgent()
+    paper = agent.invoke(state)
+    return {
+        "paper": paper.model_dump(),
+    }
+
+
 def node_abort(state: Dict[str, Any]) -> Dict[str, Any]:
     """Abort node — triggered when retry limits are exceeded."""
     logger.error("━━━ NODE: ABORT ━━━ — hypothesis abandoned.")
@@ -459,6 +470,14 @@ def route_after_debugger(state: Dict[str, Any]) -> str:
     return target
 
 
+def route_after_scientist(state: Dict[str, Any]) -> str:
+    """After Scientist: if successful, go to writer, else end."""
+    status = state.get("hypothesis_status")
+    if status == HypothesisStatus.SUCCEEDED.value:
+        return "writer"
+    return "end"
+
+
 def theorist_revision_wrapper(state: Dict[str, Any]) -> Dict[str, Any]:
     """Increment the theorist revision counter before re-entering Theorist."""
     new_count = state.get("theorist_revision_count", 0) + 1
@@ -494,6 +513,7 @@ def build_graph() -> StateGraph:
     graph.add_node("level2", node_level2)
     graph.add_node("debugger", node_debugger)
     graph.add_node("scientist", node_scientist)
+    graph.add_node("writer", node_writer)
     graph.add_node("abort", node_abort)
 
     # ── Edges ──────────────────────────────────────────────────
@@ -565,8 +585,18 @@ def build_graph() -> StateGraph:
         },
     )
 
-    # Scientist → END
-    graph.add_edge("scientist", END)
+    # Scientist → (conditional: writer or end)
+    graph.add_conditional_edges(
+        "scientist",
+        route_after_scientist,
+        {
+            "writer": "writer",
+            "end": END,
+        },
+    )
+
+    # Writer → END
+    graph.add_edge("writer", END)
 
     # Abort → END
     graph.add_edge("abort", END)

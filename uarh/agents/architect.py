@@ -52,12 +52,14 @@ THE CODE YOU WRITE MUST BE FULLY SELF-CONTAINED. This means:
    a. Loads/creates its own data (from config["dataset_path"], config["environment_name"], or synthetic data).
    b. Runs its own complete training/evaluation loop.
    c. Returns a dict of metrics: {"final_loss": ..., "final_metric": ..., ...}
+   d. If `config.get("output_dir")` is set, saves the final trained model weights and any plots/visualizations to that directory.
 4. The `run_training` function receives a config dict with:
    - "dataset_path": str or None — path to a data file/directory
    - "environment_name": str or None — RL environment name
    - "device": str — "cpu", "cuda", or "mps"
    - "max_steps": int — maximum training steps
    - "learning_rate": float
+   - "output_dir": str or None — directory to save artifacts
 5. The module must be runnable as: `model = create_model(); metrics = run_training(model, config)`
 
 CRITICAL RULES:
