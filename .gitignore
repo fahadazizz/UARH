@@ -5,6 +5,8 @@ data/chromadb/
 .ruff_cache/
 dataset/
 workspace/
+World_Model_Latent_Mechanism/
+my_new_experiments/
 
 data/axioms.json
 data/lineage.db
@@ -14,3 +16,6 @@ data/semantic_graph.json
 .env
 execution_run.log
 __pycache__
+
+
+my_new_experiments/

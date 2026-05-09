@@ -447,14 +447,27 @@ def launch(
         
     # Override environment variables for system models so get_settings() picks them up
     system_cfg = config.get("system", {})
-    if "elite_model" in system_cfg:
-        os.environ["UARH_ELITE_MODEL"] = system_cfg["elite_model"]
-    if "fast_model" in system_cfg:
-        os.environ["UARH_FAST_MODEL"] = system_cfg["fast_model"]
+    
+    def get_model_string(model_key: str, provider_key: str) -> str | None:
+        model = system_cfg.get(model_key)
+        provider = system_cfg.get(provider_key)
+        if not model:
+            return None
+        if provider and not model.startswith(f"{provider}/"):
+            return f"{provider}/{model}"
+        return model
+
+    elite_full = get_model_string("elite_model", "elite_provider")
+    if elite_full:
+        os.environ["UARH_ELITE_MODEL"] = elite_full
         
-    # Clear settings cache so it picks up new env vars
+    fast_full = get_model_string("fast_model", "fast_provider")
+    if fast_full:
+        os.environ["UARH_FAST_MODEL"] = fast_full
+        
+    # Refresh settings so it picks up new env vars
     from uarh.core.config import get_settings
-    get_settings.cache_clear()
+    get_settings(force_reload=True)
         
     exp_cfg = config.get("experiment", {})
     hyper_cfg = config.get("hyperparameters", {})

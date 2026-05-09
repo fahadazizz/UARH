@@ -76,10 +76,10 @@ class UARHSettings(BaseSettings):
 _settings: Optional[UARHSettings] = None
 
 
-def get_settings() -> UARHSettings:
+def get_settings(force_reload: bool = False) -> UARHSettings:
     """Return the global settings singleton, creating it on first call."""
     global _settings
-    if _settings is None:
+    if _settings is None or force_reload:
         _settings = UARHSettings()
         _settings.ensure_dirs()
     return _settings
